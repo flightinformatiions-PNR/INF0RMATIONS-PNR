@@ -3,122 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cek PNR Premium</title>
+<title>PNR Check</title>
 
 <style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0d47a1, #1976d2);
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Glass Card */
+.card {
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 25px;
+    width: 350px;
     color: white;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+h2 {
     text-align: center;
-}
-
-h1 {
-    padding: 20px;
-}
-
-.container {
-    background: white;
-    color: black;
-    max-width: 420px;
-    margin: auto;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
 }
 
 input {
-    width: 90%;
+    width: 100%;
     padding: 12px;
     border-radius: 10px;
-    border: 1px solid #ccc;
+    border: none;
+    margin-bottom: 10px;
+    outline: none;
 }
 
 button {
-    margin-top: 10px;
-    padding: 12px 20px;
+    width: 100%;
+    padding: 12px;
     border: none;
     border-radius: 10px;
-    background: #0d47a1;
+    background: #00c6ff;
     color: white;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    background: #1565c0;
+    background: #0072ff;
 }
 
-/* Loading */
-.loading {
-    display: none;
-    margin-top: 15px;
-}
-
-.loader {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #0d47a1;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: auto;
-}
-
-@keyframes spin {
-    100% { transform: rotate(360deg); }
-}
-
-/* Ticket */
+/* Ticket Style */
 .ticket {
-    display: none;
     margin-top: 20px;
-    background: #f5f5f5;
+    background: white;
+    color: black;
     border-radius: 15px;
+    overflow: hidden;
+    display: none;
+    animation: fade 0.5s ease;
+}
+
+@keyframes fade {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.ticket-header {
+    background: #0072ff;
+    color: white;
     padding: 15px;
-    text-align: left;
-    animation: fadeIn 0.5s ease;
+    text-align: center;
+    font-weight: bold;
 }
 
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+.ticket-body {
+    padding: 15px;
 }
 
-.status.pending { color: orange; font-weight: bold; }
-.status.success { color: green; font-weight: bold; }
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.status {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.pending { color: orange; }
+.success { color: green; }
+
+.loading {
+    text-align: center;
+    display: none;
+    margin-top: 10px;
+}
+
+.dot {
+    height: 8px;
+    width: 8px;
+    background: white;
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 1.4s infinite both;
+}
+
+.dot:nth-child(2){ animation-delay: .2s;}
+.dot:nth-child(3){ animation-delay: .4s;}
+
+@keyframes blink {
+    0%,80%,100% {opacity: 0;}
+    40% {opacity: 1;}
+}
 
 .countdown {
-    margin-top: 10px;
-    font-weight: bold;
+    text-align: center;
     color: red;
+    font-size: 14px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>✈️ Cek PNR</h1>
+<div class="card">
+    <h2>✈️ Check PNR</h2>
 
-<div class="container">
-    <input type="text" id="pnr" placeholder="Masukkan Kode PNR">
-    <br>
-    <button onclick="cekPNR()">Cek Sekarang</button>
+    <input type="text" id="pnr" placeholder="Masukkan kode PNR">
+    <button onclick="cekPNR()">Cek Tiket</button>
 
     <div class="loading" id="loading">
-        <div class="loader"></div>
-        <p>Mencari data...</p>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
 
     <div class="ticket" id="ticket">
-        <h3>E-TICKET</h3>
-        <p><b>Nama:</b> <span id="nama"></span></p>
-        <p><b>Rute:</b> <span id="rute"></span></p>
-        <p><b>Jam:</b> <span id="jam"></span></p>
-        <p><b>Seat:</b> <span id="seat"></span></p>
-        <p><b>Class:</b> <span id="kelas"></span></p>
-        <p><b>No E-Tiket:</b> <span id="eticket"></span></p>
-        <p><b>Status:</b> <span id="status"></span></p>
+        <div class="ticket-header">E-TICKET</div>
+        <div class="ticket-body">
+            <div class="row"><span>Nama</span><span id="nama"></span></div>
+            <div class="row"><span>Rute</span><span id="rute"></span></div>
+            <div class="row"><span>Jam</span><span id="jam"></span></div>
+            <div class="row"><span>Seat</span><span id="seat"></span></div>
+            <div class="row"><span>Class</span><span id="kelas"></span></div>
+            <div class="row"><span>E-Ticket</span><span id="eticket"></span></div>
+        </div>
+        <div class="status" id="status"></div>
         <div class="countdown" id="countdown"></div>
     </div>
 </div>
@@ -178,16 +220,13 @@ function cekPNR() {
 
             if (timer) clearInterval(timer);
 
-            if (d.deadline) {
-                startCountdown(d.deadline);
-            } else {
-                document.getElementById("countdown").innerText = "";
-            }
+            if (d.deadline) startCountdown(d.deadline);
+            else document.getElementById("countdown").innerText = "";
 
         } else {
             alert("PNR tidak ditemukan!");
         }
-    }, 1500);
+    }, 1200);
 }
 
 function startCountdown(deadline) {
@@ -208,7 +247,7 @@ function startCountdown(deadline) {
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        el.innerText = "Batas bayar: " + h + "j " + m + "m " + s + "d";
+        el.innerText = `Batas bayar: ${h}j ${m}m ${s}d`;
     }, 1000);
 }
 </script>
