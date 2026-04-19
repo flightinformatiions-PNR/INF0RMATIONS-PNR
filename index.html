@@ -3,202 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cek PNR</title>
+<title>Airline PNR App</title>
 
 <style>
 body{
     font-family:'Segoe UI',sans-serif;
-    background:linear-gradient(135deg,#1e3c72,#2a5298);
     margin:0;
+    background:#0f172a;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
 }
 
-/* Card */
-.card{
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(10px);
-    padding:20px;
-    border-radius:15px;
-    width:360px;
-    text-align:center;
+/* APP CONTAINER */
+.app{
+    width:380px;
+    background:#111827;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
     color:white;
-    box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
-input,button{
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    padding:15px;
+    text-align:center;
+}
+
+.header h2{
+    margin:0;
+    font-size:18px;
+}
+
+.header p{
+    margin:5px 0 0;
+    font-size:12px;
+    opacity:0.9;
+}
+
+/* CONTENT */
+.content{
+    padding:15px;
+}
+
+/* DESCRIPTION */
+.desc{
+    font-size:12px;
+    opacity:0.8;
+    margin-bottom:10px;
+}
+
+/* INPUT */
+input{
     width:100%;
-    padding:10px;
-    border-radius:8px;
+    padding:12px;
+    border-radius:10px;
     border:none;
-    margin-top:10px;
+    outline:none;
+    margin-top:8px;
+    background:#1f2937;
+    color:white;
 }
 
 button{
-    background:#00c6ff;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    margin-top:10px;
+    background:#22c55e;
     color:white;
     font-weight:bold;
     cursor:pointer;
 }
 
-/* Ticket */
+/* STATUS CARD */
+.status-card{
+    margin-top:15px;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+    display:none;
+}
+
+.success{background:#16a34a;}
+.pending{background:#f59e0b;}
+
+/* TICKET */
 .ticket{
-    margin-top:20px;
-    background:white;
+    margin-top:15px;
+    background:#1f2937;
     border-radius:12px;
     overflow:hidden;
     display:none;
-    animation:fade 0.4s ease;
 }
 
-@keyframes fade{
-    from{opacity:0; transform:translateY(10px);}
-    to{opacity:1; transform:translateY(0);}
-}
-
-.ticket-header{
-    background:#0072ff;
-    color:white;
-    padding:12px;
-    display:flex;
-    justify-content:space-between;
-    font-weight:bold;
-}
-
-.ticket-body{
-    padding:15px;
-    color:black;
-}
-
+/* ROUTE */
 .route{
     text-align:center;
-    margin-bottom:10px;
+    padding:10px;
 }
 
 .route h3{
     margin:0;
-    font-size:20px;
 }
 
 .route small{
-    color:gray;
+    opacity:0.7;
 }
 
-/* Divider */
-.divider{
-    border-top:2px dashed #ccc;
-    margin:12px 0;
-}
-
-/* Grid */
+/* GRID */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
-    font-size:14px;
+    padding:10px;
+    font-size:13px;
+}
+
+.box{
+    background:#111827;
+    padding:8px;
+    border-radius:8px;
 }
 
 .label{
-    color:gray;
-    font-size:12px;
+    font-size:11px;
+    opacity:0.6;
 }
 
-/* Status */
-.status{
-    text-align:center;
-    padding:10px;
-    font-weight:bold;
-}
-
-.success{color:green;}
-.pending{color:orange;}
-
-/* Note */
+/* NOTE */
 .note{
-    background:#f9f9f9;
+    background:#0b1220;
     padding:10px;
-    font-size:12px;
-    border-top:1px solid #ddd;
+    font-size:11px;
+    border-top:1px solid #374151;
 }
 
-/* Notif */
+/* NOTIF */
 #notif{
     position:fixed;
-    top:20px;
-    right:20px;
-    padding:12px 18px;
+    top:15px;
+    right:15px;
+    padding:10px 15px;
     border-radius:8px;
     color:white;
     display:none;
-    z-index:999;
 }
 
-.successNotif{background:#28a745;}
-.errorNotif{background:#dc3545;}
+.ok{background:#22c55e;}
+.err{background:#ef4444;}
 </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h2>✈️ Cek PNR</h2>
+<div class="app">
 
-    <input type="text" id="pnr" placeholder="Masukkan kode PNR">
-    <button onclick="cekPNR()">Cek Tiket</button>
+    <!-- HEADER -->
+    <div class="header">
+        <h2>✈️ Airline PNR System</h2>
+        <p>Check booking, flight status & ticket info</p>
+    </div>
 
-    <div class="ticket" id="ticket">
-        <div class="ticket-header">
-            <span>BOARDING PASS</span>
-            <span id="kode"></span>
+    <div class="content">
+
+        <!-- DESCRIPTION -->
+        <div class="desc">
+            Sistem ini digunakan untuk mengecek status tiket penerbangan, data penumpang, dan informasi keberangkatan secara real-time.
         </div>
 
-        <div class="ticket-body">
+        <input type="text" id="pnr" placeholder="Enter PNR Code">
+        <button onclick="cekPNR()">Search Ticket</button>
+
+        <!-- STATUS -->
+        <div class="status-card" id="statusCard"></div>
+
+        <!-- TICKET -->
+        <div class="ticket" id="ticket">
+
             <div class="route">
                 <h3 id="rute"></h3>
                 <small id="jam"></small>
             </div>
 
-            <div class="divider"></div>
-
             <div class="grid">
-                <div><div class="label">Nama</div><div id="nama"></div></div>
-                <div><div class="label">Seat</div><div id="seat"></div></div>
-                <div><div class="label">Gate</div><div id="gate"></div></div>
-                <div><div class="label">Class</div><div id="kelas"></div></div>
-                <div><div class="label">E-Ticket</div><div id="eticket"></div></div>
+
+                <div class="box">
+                    <div class="label">Passenger</div>
+                    <div id="nama"></div>
+                </div>
+
+                <div class="box">
+                    <div class="label">Seat</div>
+                    <div id="seat"></div>
+                </div>
+
+                <div class="box">
+                    <div class="label">Gate</div>
+                    <div id="gate"></div>
+                </div>
+
+                <div class="box">
+                    <div class="label">Class</div>
+                    <div id="kelas"></div>
+                </div>
+
+                <div class="box">
+                    <div class="label">E-Ticket</div>
+                    <div id="eticket"></div>
+                </div>
+
+                <div class="box">
+                    <div class="label">PNR</div>
+                    <div id="kode"></div>
+                </div>
+
             </div>
 
-            <div class="divider"></div>
-
-            <div class="status" id="status"></div>
             <div class="note" id="note"></div>
+
         </div>
+
     </div>
 </div>
 
 <div id="notif"></div>
 
-<!-- 🔊 SOUND -->
+<!-- SOUND -->
 <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/click.ogg"></audio>
-
-<!-- ✈️ SUARA BANDARA (lebih halus) -->
 <audio id="okSound" src="https://actions.google.com/sounds/v1/ambiences/airport.ogg"></audio>
-
 <audio id="errSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
 
 <script>
 const dataPNR={
-    "JKUTZG":{
-        nama:"LAUPE",
+    "ABC123":{
+        nama:"Akbar",
         rute:"CGK → DPS",
         jam:"10:00 WIB",
         gate:"A12",
         seat:"12A",
         kelas:"Economy",
         eticket:"ETK-998877",
-        status:"Sukses"
+        status:"CHECK-IN DONE"
     },
     "XYZ789":{
         nama:"Rani",
@@ -208,7 +259,7 @@ const dataPNR={
         seat:"7B",
         kelas:"Business",
         eticket:"ETK-112233",
-        status:"Sukses"
+        status:"BOARDING SOON"
     }
 };
 
@@ -218,12 +269,12 @@ function sound(id){
     a.play().catch(()=>{});
 }
 
-function showNotif(text,type){
+function notif(text,type){
     let n=document.getElementById("notif");
     n.innerText=text;
-    n.className=(type==="success"?"successNotif":"errorNotif");
+    n.className=type==="ok"?"ok":"err";
     n.style.display="block";
-    setTimeout(()=>{n.style.display="none";},2000);
+    setTimeout(()=>n.style.display="none",2000);
 }
 
 function cekPNR(){
@@ -231,11 +282,11 @@ function cekPNR(){
 
     let pnr=document.getElementById("pnr").value.toUpperCase();
     let ticket=document.getElementById("ticket");
+    let statusCard=document.getElementById("statusCard");
 
     if(dataPNR[pnr]){
         let d=dataPNR[pnr];
 
-        document.getElementById("kode").innerText=pnr;
         document.getElementById("nama").innerText=d.nama;
         document.getElementById("rute").innerText=d.rute;
         document.getElementById("jam").innerText=d.jam;
@@ -243,30 +294,25 @@ function cekPNR(){
         document.getElementById("seat").innerText=d.seat;
         document.getElementById("kelas").innerText=d.kelas;
         document.getElementById("eticket").innerText=d.eticket;
-
-        let status=document.getElementById("status");
-        let note=document.getElementById("note");
-
-        status.innerText=d.status;
-        status.className="status "+(d.status==="Sukses"?"success":"pending");
-
-        if(d.status==="Sukses"){
-            note.innerText="Tiket sudah dibayar. Silakan menuju gate sebelum boarding.";
-        }else{
-            note.innerText="Tiket belum dibayar. Segera lakukan pembayaran sebelum batas waktu.";
-        }
+        document.getElementById("kode").innerText=pnr;
 
         ticket.style.display="block";
 
-        // ✈️ suara bandara
-        sound("okSound");
+        statusCard.style.display="block";
+        statusCard.innerText=d.status;
+        statusCard.className="status-card success";
 
-        showNotif("Data ditemukan","success");
+        document.getElementById("note").innerText=
+        "Please arrive at the gate 90 minutes before departure.";
+
+        sound("okSound");
+        notif("PNR Found","ok");
 
     }else{
         ticket.style.display="none";
+        statusCard.style.display="none";
         sound("errSound");
-        showNotif("PNR tidak ditemukan","error");
+        notif("PNR Not Found","err");
     }
 }
 </script>
