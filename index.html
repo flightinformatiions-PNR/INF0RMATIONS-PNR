@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cek PNR Premium</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0d47a1, #1976d2);
+    margin: 0;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    color: black;
+    max-width: 420px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    margin-top: 10px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #0d47a1;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1565c0;
+}
+
+/* Loading */
+.loading {
+    display: none;
+    margin-top: 15px;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #0d47a1;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* Ticket */
+.ticket {
+    display: none;
+    margin-top: 20px;
+    background: #f5f5f5;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: left;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.status.pending { color: orange; font-weight: bold; }
+.status.success { color: green; font-weight: bold; }
+
+.countdown {
+    margin-top: 10px;
+    font-weight: bold;
+    color: red;
+}
+</style>
+</head>
+
+<body>
+
+<h1>✈️ Cek PNR</h1>
+
+<div class="container">
+    <input type="text" id="pnr" placeholder="Masukkan Kode PNR">
+    <br>
+    <button onclick="cekPNR()">Cek Sekarang</button>
+
+    <div class="loading" id="loading">
+        <div class="loader"></div>
+        <p>Mencari data...</p>
+    </div>
+
+    <div class="ticket" id="ticket">
+        <h3>E-TICKET</h3>
+        <p><b>Nama:</b> <span id="nama"></span></p>
+        <p><b>Rute:</b> <span id="rute"></span></p>
+        <p><b>Jam:</b> <span id="jam"></span></p>
+        <p><b>Seat:</b> <span id="seat"></span></p>
+        <p><b>Class:</b> <span id="kelas"></span></p>
+        <p><b>No E-Tiket:</b> <span id="eticket"></span></p>
+        <p><b>Status:</b> <span id="status"></span></p>
+        <div class="countdown" id="countdown"></div>
+    </div>
+</div>
+
+<script>
+const dataPNR = {
+    "ABC123": {
+        nama: "Akbar Ramadhan",
+        rute: "Jakarta → Bali",
+        jam: "10:00 WIB",
+        seat: "12A",
+        kelas: "Economy",
+        eticket: "ETK-998877",
+        status: "Belum Dibayar",
+        deadline: "2026-04-20T23:59:00"
+    },
+    "XYZ789": {
+        nama: "Rani Putri",
+        rute: "Surabaya → Makassar",
+        jam: "15:30 WIB",
+        seat: "7B",
+        kelas: "Business",
+        eticket: "ETK-112233",
+        status: "Sukses",
+        deadline: null
+    }
+};
+
+let timer;
+
+function cekPNR() {
+    const pnr = document.getElementById("pnr").value.toUpperCase();
+    const loading = document.getElementById("loading");
+    const ticket = document.getElementById("ticket");
+
+    ticket.style.display = "none";
+    loading.style.display = "block";
+
+    setTimeout(() => {
+        loading.style.display = "none";
+
+        if (dataPNR[pnr]) {
+            const d = dataPNR[pnr];
+
+            document.getElementById("nama").innerText = d.nama;
+            document.getElementById("rute").innerText = d.rute;
+            document.getElementById("jam").innerText = d.jam;
+            document.getElementById("seat").innerText = d.seat;
+            document.getElementById("kelas").innerText = d.kelas;
+            document.getElementById("eticket").innerText = d.eticket;
+
+            const statusEl = document.getElementById("status");
+            statusEl.innerText = d.status;
+            statusEl.className = "status " + (d.status === "Sukses" ? "success" : "pending");
+
+            ticket.style.display = "block";
+
+            if (timer) clearInterval(timer);
+
+            if (d.deadline) {
+                startCountdown(d.deadline);
+            } else {
+                document.getElementById("countdown").innerText = "";
+            }
+
+        } else {
+            alert("PNR tidak ditemukan!");
+        }
+    }, 1500);
+}
+
+function startCountdown(deadline) {
+    const el = document.getElementById("countdown");
+
+    timer = setInterval(() => {
+        const now = new Date().getTime();
+        const end = new Date(deadline).getTime();
+        const diff = end - now;
+
+        if (diff <= 0) {
+            el.innerText = "Waktu pembayaran habis!";
+            clearInterval(timer);
+            return;
+        }
+
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        el.innerText = "Batas bayar: " + h + "j " + m + "m " + s + "d";
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
