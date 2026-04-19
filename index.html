@@ -16,7 +16,6 @@ body{
     height:100vh;
 }
 
-/* Card */
 .card{
     background:rgba(255,255,255,0.1);
     backdrop-filter:blur(10px);
@@ -43,7 +42,6 @@ button{
     cursor:pointer;
 }
 
-/* Ticket */
 .ticket{
     margin-top:20px;
     background:white;
@@ -77,22 +75,14 @@ button{
     margin-bottom:10px;
 }
 
-.route h3{
-    margin:0;
-    font-size:20px;
-}
+.route h3{margin:0;font-size:20px;}
+.route small{color:gray;}
 
-.route small{
-    color:gray;
-}
-
-/* Divider */
 .divider{
     border-top:2px dashed #ccc;
     margin:12px 0;
 }
 
-/* Grid */
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -105,7 +95,6 @@ button{
     font-size:12px;
 }
 
-/* Status */
 .status{
     text-align:center;
     padding:10px;
@@ -115,7 +104,6 @@ button{
 .success{color:green;}
 .pending{color:orange;}
 
-/* Note */
 .note{
     background:#f9f9f9;
     padding:10px;
@@ -123,7 +111,6 @@ button{
     border-top:1px solid #ddd;
 }
 
-/* Notif */
 #notif{
     position:fixed;
     top:20px;
@@ -132,7 +119,6 @@ button{
     border-radius:8px;
     color:white;
     display:none;
-    z-index:999;
 }
 
 .successNotif{background:#28a745;}
@@ -163,32 +149,16 @@ button{
             <div class="divider"></div>
 
             <div class="grid">
-                <div>
-                    <div class="label">Nama</div>
-                    <div id="nama"></div>
-                </div>
-                <div>
-                    <div class="label">Seat</div>
-                    <div id="seat"></div>
-                </div>
-                <div>
-                    <div class="label">Gate</div>
-                    <div id="gate"></div>
-                </div>
-                <div>
-                    <div class="label">Class</div>
-                    <div id="kelas"></div>
-                </div>
-                <div>
-                    <div class="label">E-Ticket</div>
-                    <div id="eticket"></div>
-                </div>
+                <div><div class="label">Nama</div><div id="nama"></div></div>
+                <div><div class="label">Seat</div><div id="seat"></div></div>
+                <div><div class="label">Gate</div><div id="gate"></div></div>
+                <div><div class="label">Class</div><div id="kelas"></div></div>
+                <div><div class="label">E-Ticket</div><div id="eticket"></div></div>
             </div>
 
             <div class="divider"></div>
 
             <div class="status" id="status"></div>
-
             <div class="note" id="note"></div>
         </div>
     </div>
@@ -196,9 +166,9 @@ button{
 
 <div id="notif"></div>
 
-<!-- SOUND -->
+<!-- 🔊 SOUND BARU -->
 <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/click.ogg"></audio>
-<audio id="okSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="okSound" src="https://actions.google.com/sounds/v1/ui/notification.ogg"></audio>
 <audio id="errSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
 
 <script>
