@@ -6,7 +6,7 @@
 <title>PNR Check Pro</title>
 
 <style>
-body {
+body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
     background:linear-gradient(135deg,#141e30,#243b55);
@@ -17,7 +17,7 @@ body {
     color:white;
 }
 
-.card {
+.card{
     background:rgba(255,255,255,0.1);
     backdrop-filter:blur(12px);
     padding:20px;
@@ -26,9 +26,9 @@ body {
     box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-h2 {text-align:center;}
+h2{text-align:center;}
 
-input {
+input{
     width:100%;
     padding:12px;
     border-radius:10px;
@@ -36,7 +36,7 @@ input {
     margin:10px 0;
 }
 
-button {
+button{
     width:100%;
     padding:12px;
     border:none;
@@ -47,7 +47,7 @@ button {
     cursor:pointer;
 }
 
-.ticket {
+.ticket{
     margin-top:15px;
     background:white;
     color:black;
@@ -56,7 +56,7 @@ button {
     overflow:hidden;
 }
 
-.header {
+.header{
     background:#0072ff;
     color:white;
     padding:12px;
@@ -64,25 +64,25 @@ button {
     font-weight:bold;
 }
 
-.body { padding:12px; }
+.body{padding:12px;}
 
-.row {
+.row{
     display:flex;
     justify-content:space-between;
     font-size:14px;
     margin:4px 0;
 }
 
-.status {
+.status{
     text-align:center;
     padding:10px;
     font-weight:bold;
 }
 
-.pending {color:orange;}
-.success {color:green;}
+.pending{color:orange;}
+.success{color:green;}
 
-.countdown {
+.countdown{
     text-align:center;
     color:red;
     font-size:13px;
@@ -94,6 +94,7 @@ button {
 
 <div class="card">
     <h2>✈️ Check PNR</h2>
+
     <input type="text" id="pnr" placeholder="Masukkan kode PNR">
     <button onclick="cekPNR()">Cek Tiket</button>
 
@@ -114,14 +115,14 @@ button {
     </div>
 </div>
 
-<!-- SOUND -->
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
-<audio id="successSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
-<audio id="errorSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+<!-- AUDIO LOCAL (WAJIB biar bunyi stabil) -->
+<audio id="clickSound" src="sound/click.mp3"></audio>
+<audio id="successSound" src="sound/success.mp3"></audio>
+<audio id="errorSound" src="sound/error.mp3"></audio>
 
 <script>
-const dataPNR = {
-    "ABC123": {
+const dataPNR={
+    "ABC123":{
         nama:"Akbar Ramadhan",
         rute:"CGK → DPS",
         gate:"A12",
@@ -132,7 +133,7 @@ const dataPNR = {
         status:"Belum Dibayar",
         deadline:"2026-04-20T23:59:00"
     },
-    "XYZ789": {
+    "XYZ789":{
         nama:"Rani Putri",
         rute:"SUB → UPG",
         gate:"B7",
@@ -147,17 +148,27 @@ const dataPNR = {
 
 let timer;
 
-function cekPNR(){
-    document.getElementById("clickSound").play();
+// 🔊 SOUND FIX
+function playSound(id){
+    const audio=document.getElementById(id);
+    if(audio){
+        audio.currentTime=0;
+        audio.play().catch(()=>{});
+    }
+}
 
-    const pnr = document.getElementById("pnr").value.toUpperCase();
-    const ticket = document.getElementById("ticket");
+function cekPNR(){
+
+    playSound("clickSound");
+
+    const pnr=document.getElementById("pnr").value.toUpperCase();
+    const ticket=document.getElementById("ticket");
 
     ticket.style.display="none";
 
     setTimeout(()=>{
         if(dataPNR[pnr]){
-            const d = dataPNR[pnr];
+            const d=dataPNR[pnr];
 
             document.getElementById("nama").innerText=d.nama;
             document.getElementById("kode").innerText=pnr;
@@ -174,16 +185,16 @@ function cekPNR(){
 
             ticket.style.display="block";
 
-            document.getElementById("successSound").play();
+            playSound("successSound");
 
             if(timer) clearInterval(timer);
             if(d.deadline) startCountdown(d.deadline);
 
         }else{
-            document.getElementById("errorSound").play();
+            playSound("errorSound");
             alert("PNR tidak ditemukan!");
         }
-    },800);
+    },500);
 }
 
 function startCountdown(deadline){
