@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PNR Check</title>
+<title>Cek PNR</title>
 
 <style>
 body{
@@ -14,7 +14,6 @@ body{
     justify-content:center;
     align-items:center;
     height:100vh;
-    color:white;
 }
 
 /* Card */
@@ -23,42 +22,31 @@ body{
     backdrop-filter:blur(10px);
     padding:20px;
     border-radius:15px;
-    width:330px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.3);
+    width:360px;
     text-align:center;
+    color:white;
+    box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
-h2{margin-bottom:15px;}
-
-input{
+input,button{
     width:100%;
     padding:10px;
     border-radius:8px;
     border:none;
-    margin-bottom:10px;
+    margin-top:10px;
 }
 
 button{
-    width:100%;
-    padding:10px;
-    border:none;
-    border-radius:8px;
     background:#00c6ff;
     color:white;
     font-weight:bold;
     cursor:pointer;
-    transition:0.3s;
-}
-
-button:hover{
-    background:#0072ff;
 }
 
 /* Ticket */
 .ticket{
-    margin-top:15px;
+    margin-top:20px;
     background:white;
-    color:black;
     border-radius:12px;
     overflow:hidden;
     display:none;
@@ -70,33 +58,85 @@ button:hover{
     to{opacity:1; transform:translateY(0);}
 }
 
-.header{
+.ticket-header{
     background:#0072ff;
     color:white;
-    padding:10px;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
     font-weight:bold;
 }
 
-.body{
-    padding:12px;
-    text-align:left;
+.ticket-body{
+    padding:15px;
+    color:black;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
+.route{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.route h3{
+    margin:0;
+    font-size:20px;
+}
+
+.route small{
+    color:gray;
+}
+
+/* Divider */
+.divider{
+    border-top:2px dashed #ccc;
+    margin:12px 0;
+}
+
+/* Grid */
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
     font-size:14px;
-    margin:5px 0;
 }
 
+.label{
+    color:gray;
+    font-size:12px;
+}
+
+/* Status */
 .status{
     text-align:center;
-    padding:8px;
+    padding:10px;
     font-weight:bold;
 }
 
 .success{color:green;}
 .pending{color:orange;}
+
+/* Note */
+.note{
+    background:#f9f9f9;
+    padding:10px;
+    font-size:12px;
+    border-top:1px solid #ddd;
+}
+
+/* Notif */
+#notif{
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:12px 18px;
+    border-radius:8px;
+    color:white;
+    display:none;
+    z-index:999;
+}
+
+.successNotif{background:#28a745;}
+.errorNotif{background:#dc3545;}
 </style>
 </head>
 
@@ -109,17 +149,54 @@ button:hover{
     <button onclick="cekPNR()">Cek Tiket</button>
 
     <div class="ticket" id="ticket">
-        <div class="header">E-TICKET</div>
-        <div class="body">
-            <div class="row"><span>Nama</span><span id="nama"></span></div>
-            <div class="row"><span>Rute</span><span id="rute"></span></div>
-            <div class="row"><span>Seat</span><span id="seat"></span></div>
+        <div class="ticket-header">
+            <span>BOARDING PASS</span>
+            <span id="kode"></span>
         </div>
-        <div class="status" id="status"></div>
+
+        <div class="ticket-body">
+            <div class="route">
+                <h3 id="rute"></h3>
+                <small id="jam"></small>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="grid">
+                <div>
+                    <div class="label">Nama</div>
+                    <div id="nama"></div>
+                </div>
+                <div>
+                    <div class="label">Seat</div>
+                    <div id="seat"></div>
+                </div>
+                <div>
+                    <div class="label">Gate</div>
+                    <div id="gate"></div>
+                </div>
+                <div>
+                    <div class="label">Class</div>
+                    <div id="kelas"></div>
+                </div>
+                <div>
+                    <div class="label">E-Ticket</div>
+                    <div id="eticket"></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="status" id="status"></div>
+
+            <div class="note" id="note"></div>
+        </div>
     </div>
 </div>
 
-<!-- 🔊 SOUND SIMPLE -->
+<div id="notif"></div>
+
+<!-- SOUND -->
 <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/click.ogg"></audio>
 <audio id="okSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 <audio id="errSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
@@ -128,14 +205,22 @@ button:hover{
 const dataPNR={
     "ABC123":{
         nama:"Akbar",
-        rute:"Jakarta → Bali",
+        rute:"CGK → DPS",
+        jam:"10:00 WIB",
+        gate:"A12",
         seat:"12A",
+        kelas:"Economy",
+        eticket:"ETK-998877",
         status:"Belum Dibayar"
     },
     "XYZ789":{
         nama:"Rani",
-        rute:"Surabaya → Makassar",
+        rute:"SUB → UPG",
+        jam:"15:30 WIB",
+        gate:"B7",
         seat:"7B",
+        kelas:"Business",
+        eticket:"ETK-112233",
         status:"Sukses"
     }
 };
@@ -144,6 +229,14 @@ function sound(id){
     let a=document.getElementById(id);
     a.currentTime=0;
     a.play().catch(()=>{});
+}
+
+function showNotif(text,type){
+    let n=document.getElementById("notif");
+    n.innerText=text;
+    n.className=(type==="success"?"successNotif":"errorNotif");
+    n.style.display="block";
+    setTimeout(()=>{n.style.display="none";},2000);
 }
 
 function cekPNR(){
@@ -155,21 +248,36 @@ function cekPNR(){
     if(dataPNR[pnr]){
         let d=dataPNR[pnr];
 
+        document.getElementById("kode").innerText=pnr;
         document.getElementById("nama").innerText=d.nama;
         document.getElementById("rute").innerText=d.rute;
+        document.getElementById("jam").innerText=d.jam;
+        document.getElementById("gate").innerText=d.gate;
         document.getElementById("seat").innerText=d.seat;
+        document.getElementById("kelas").innerText=d.kelas;
+        document.getElementById("eticket").innerText=d.eticket;
 
         let status=document.getElementById("status");
+        let note=document.getElementById("note");
+
         status.innerText=d.status;
         status.className="status "+(d.status==="Sukses"?"success":"pending");
 
+        if(d.status==="Sukses"){
+            note.innerText="Tiket sudah dibayar. Harap datang 90 menit sebelum keberangkatan.";
+        }else{
+            note.innerText="Tiket belum dibayar. Segera lakukan pembayaran sebelum batas waktu.";
+        }
+
         ticket.style.display="block";
+
         sound("okSound");
+        showNotif("Data ditemukan","success");
 
     }else{
         ticket.style.display="none";
         sound("errSound");
-        alert("PNR tidak ditemukan");
+        showNotif("PNR tidak ditemukan","error");
     }
 }
 </script>
