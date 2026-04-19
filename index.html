@@ -3,135 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PNR Check</title>
+<title>PNR Check Pro</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
-}
-
 body {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#141e30,#243b55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
 }
 
-/* Glass Card */
 .card {
-    backdrop-filter: blur(15px);
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 25px;
-    width: 350px;
-    color: white;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px);
+    padding:20px;
+    border-radius:20px;
+    width:360px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
+h2 {text-align:center;}
 
 input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    margin-bottom: 10px;
-    outline: none;
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    margin:10px 0;
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: #00c6ff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00c6ff;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-button:hover {
-    background: #0072ff;
-}
-
-/* Ticket Style */
 .ticket {
-    margin-top: 20px;
-    background: white;
-    color: black;
-    border-radius: 15px;
-    overflow: hidden;
-    display: none;
-    animation: fade 0.5s ease;
+    margin-top:15px;
+    background:white;
+    color:black;
+    border-radius:15px;
+    display:none;
+    overflow:hidden;
 }
 
-@keyframes fade {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
+.header {
+    background:#0072ff;
+    color:white;
+    padding:12px;
+    text-align:center;
+    font-weight:bold;
 }
 
-.ticket-header {
-    background: #0072ff;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.ticket-body {
-    padding: 15px;
-}
+.body { padding:12px; }
 
 .row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin:4px 0;
 }
 
 .status {
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
+    text-align:center;
+    padding:10px;
+    font-weight:bold;
 }
 
-.pending { color: orange; }
-.success { color: green; }
-
-.loading {
-    text-align: center;
-    display: none;
-    margin-top: 10px;
-}
-
-.dot {
-    height: 8px;
-    width: 8px;
-    background: white;
-    border-radius: 50%;
-    display: inline-block;
-    animation: blink 1.4s infinite both;
-}
-
-.dot:nth-child(2){ animation-delay: .2s;}
-.dot:nth-child(3){ animation-delay: .4s;}
-
-@keyframes blink {
-    0%,80%,100% {opacity: 0;}
-    40% {opacity: 1;}
-}
+.pending {color:orange;}
+.success {color:green;}
 
 .countdown {
-    text-align: center;
-    color: red;
-    font-size: 14px;
+    text-align:center;
+    color:red;
+    font-size:13px;
 }
 </style>
 </head>
@@ -140,22 +94,17 @@ button:hover {
 
 <div class="card">
     <h2>✈️ Check PNR</h2>
-
     <input type="text" id="pnr" placeholder="Masukkan kode PNR">
     <button onclick="cekPNR()">Cek Tiket</button>
 
-    <div class="loading" id="loading">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-    </div>
-
     <div class="ticket" id="ticket">
-        <div class="ticket-header">E-TICKET</div>
-        <div class="ticket-body">
+        <div class="header">BOARDING PASS</div>
+        <div class="body">
             <div class="row"><span>Nama</span><span id="nama"></span></div>
+            <div class="row"><span>PNR</span><span id="kode"></span></div>
             <div class="row"><span>Rute</span><span id="rute"></span></div>
-            <div class="row"><span>Jam</span><span id="jam"></span></div>
+            <div class="row"><span>Gate</span><span id="gate"></span></div>
+            <div class="row"><span>Boarding</span><span id="boarding"></span></div>
             <div class="row"><span>Seat</span><span id="seat"></span></div>
             <div class="row"><span>Class</span><span id="kelas"></span></div>
             <div class="row"><span>E-Ticket</span><span id="eticket"></span></div>
@@ -165,90 +114,98 @@ button:hover {
     </div>
 </div>
 
+<!-- SOUND -->
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+<audio id="successSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+<audio id="errorSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+
 <script>
 const dataPNR = {
     "ABC123": {
-        nama: "Akbar Ramadhan",
-        rute: "Jakarta → Bali",
-        jam: "10:00 WIB",
-        seat: "12A",
-        kelas: "Economy",
-        eticket: "ETK-998877",
-        status: "Belum Dibayar",
-        deadline: "2026-04-20T23:59:00"
+        nama:"Akbar Ramadhan",
+        rute:"CGK → DPS",
+        gate:"A12",
+        boarding:"09:30",
+        seat:"12A",
+        kelas:"Economy",
+        eticket:"ETK-998877",
+        status:"Belum Dibayar",
+        deadline:"2026-04-20T23:59:00"
     },
     "XYZ789": {
-        nama: "Rani Putri",
-        rute: "Surabaya → Makassar",
-        jam: "15:30 WIB",
-        seat: "7B",
-        kelas: "Business",
-        eticket: "ETK-112233",
-        status: "Sukses",
-        deadline: null
+        nama:"Rani Putri",
+        rute:"SUB → UPG",
+        gate:"B7",
+        boarding:"15:00",
+        seat:"7B",
+        kelas:"Business",
+        eticket:"ETK-112233",
+        status:"Sukses",
+        deadline:null
     }
 };
 
 let timer;
 
-function cekPNR() {
+function cekPNR(){
+    document.getElementById("clickSound").play();
+
     const pnr = document.getElementById("pnr").value.toUpperCase();
-    const loading = document.getElementById("loading");
     const ticket = document.getElementById("ticket");
 
-    ticket.style.display = "none";
-    loading.style.display = "block";
+    ticket.style.display="none";
 
-    setTimeout(() => {
-        loading.style.display = "none";
-
-        if (dataPNR[pnr]) {
+    setTimeout(()=>{
+        if(dataPNR[pnr]){
             const d = dataPNR[pnr];
 
-            document.getElementById("nama").innerText = d.nama;
-            document.getElementById("rute").innerText = d.rute;
-            document.getElementById("jam").innerText = d.jam;
-            document.getElementById("seat").innerText = d.seat;
-            document.getElementById("kelas").innerText = d.kelas;
-            document.getElementById("eticket").innerText = d.eticket;
+            document.getElementById("nama").innerText=d.nama;
+            document.getElementById("kode").innerText=pnr;
+            document.getElementById("rute").innerText=d.rute;
+            document.getElementById("gate").innerText=d.gate;
+            document.getElementById("boarding").innerText=d.boarding;
+            document.getElementById("seat").innerText=d.seat;
+            document.getElementById("kelas").innerText=d.kelas;
+            document.getElementById("eticket").innerText=d.eticket;
 
-            const statusEl = document.getElementById("status");
-            statusEl.innerText = d.status;
-            statusEl.className = "status " + (d.status === "Sukses" ? "success" : "pending");
+            const statusEl=document.getElementById("status");
+            statusEl.innerText=d.status;
+            statusEl.className="status "+(d.status==="Sukses"?"success":"pending");
 
-            ticket.style.display = "block";
+            ticket.style.display="block";
 
-            if (timer) clearInterval(timer);
+            document.getElementById("successSound").play();
 
-            if (d.deadline) startCountdown(d.deadline);
-            else document.getElementById("countdown").innerText = "";
+            if(timer) clearInterval(timer);
+            if(d.deadline) startCountdown(d.deadline);
 
-        } else {
+        }else{
+            document.getElementById("errorSound").play();
             alert("PNR tidak ditemukan!");
         }
-    }, 1200);
+    },800);
 }
 
-function startCountdown(deadline) {
-    const el = document.getElementById("countdown");
+function startCountdown(deadline){
+    const el=document.getElementById("countdown");
 
-    timer = setInterval(() => {
-        const now = new Date().getTime();
-        const end = new Date(deadline).getTime();
-        const diff = end - now;
+    timer=setInterval(()=>{
+        const now=new Date().getTime();
+        const end=new Date(deadline).getTime();
+        const diff=end-now;
 
-        if (diff <= 0) {
-            el.innerText = "Waktu pembayaran habis!";
+        if(diff<=0){
+            el.innerText="Waktu pembayaran habis!";
             clearInterval(timer);
             return;
         }
 
-        const h = Math.floor(diff / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        const h=Math.floor(diff/(1000*60*60));
+        const m=Math.floor((diff%(1000*60*60))/(1000*60));
+        const s=Math.floor((diff%(1000*60))/1000);
 
-        el.innerText = `Batas bayar: ${h}j ${m}m ${s}d`;
-    }, 1000);
+        el.innerText=`Batas bayar: ${h}j ${m}m ${s}d`;
+    },1000);
 }
 </script>
 
