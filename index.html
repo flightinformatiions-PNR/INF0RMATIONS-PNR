@@ -195,4 +195,97 @@ button{
 <div id="notif"></div>
 
 <audio id="clickSound" src="https://actions.google.com/sounds/v1/ui/click.ogg"></audio>
-<audio id="okSound" src="https://actions.google.com/sounds
+<audio id="okSound" src="https://actions.google.com/sounds/v1/ambiences/airport.ogg"></audio>
+<audio id="errSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+
+<script>
+const dataPNR={
+    "QWIT24":{
+        nama:["Abdul Kamis Key Toka","Fitria Kartika"],
+        rute:"MAKASSAR (UPG) → TERNATE (TTE)",
+        jam:"06:25 AM",
+        gate:"Gate 3",
+        seat:"12A, 12B",
+        kelas:"Economy",
+        eticket:"698-3945274215",
+        status:"CONFIRMED"
+    },
+    "XYZ789":{
+        nama:["Rani"],
+        rute:"SURABAYA (SUB) → MAKASSAR (UPG)",
+        jam:"15:30 WIB",
+        gate:"B7",
+        seat:"7B",
+        kelas:"Business",
+        eticket:"ETK-112233",
+        status:"BOARDING SOON"
+    }
+};
+
+function sound(id){
+    let a=document.getElementById(id);
+    a.currentTime=0;
+    a.play().catch(()=>{});
+}
+
+function notif(text,type){
+    let n=document.getElementById("notif");
+    n.innerText=text;
+    n.className=type==="ok"?"ok":"err";
+    n.style.display="block";
+    setTimeout(()=>n.style.display="none",2000);
+}
+
+function cekPNR(){
+    sound("clickSound");
+
+    let pnr=document.getElementById("pnr").value.trim().toUpperCase();
+    let ticket=document.getElementById("ticket");
+    let statusCard=document.getElementById("statusCard");
+
+    if(!pnr){
+        notif("Masukkan kode PNR","err");
+        return;
+    }
+
+    if(dataPNR[pnr]){
+        let d=dataPNR[pnr];
+
+        document.getElementById("nama").innerText = d.nama.join(", ");
+        document.getElementById("rute").innerText=d.rute;
+        document.getElementById("jam").innerText=d.jam;
+        document.getElementById("gate").innerText=d.gate;
+        document.getElementById("seat").innerText=d.seat;
+        document.getElementById("kelas").innerText=d.kelas;
+        document.getElementById("eticket").innerText=d.eticket;
+        document.getElementById("kode").innerText=pnr;
+
+        ticket.style.display="block";
+
+        statusCard.style.display="block";
+        statusCard.innerText=d.status;
+
+        // warna status dinamis
+        if(d.status === "CONFIRMED"){
+            statusCard.className="status-card success";
+        }else{
+            statusCard.className="status-card pending";
+        }
+
+        document.getElementById("note").innerText=
+        "Please arrive at the gate 90 minutes before departure.";
+
+        sound("okSound");
+        notif("PNR Found","ok");
+
+    }else{
+        ticket.style.display="none";
+        statusCard.style.display="none";
+        sound("errSound");
+        notif("PNR Not Found","err");
+    }
+}
+</script>
+
+</body>
+</html>
